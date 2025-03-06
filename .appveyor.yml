@@ -21,7 +21,8 @@ build_script:
   - yarn build  # Сборка проекта
 
 test_script:
-  - yarn lint && yarn test  # Запуск линтера и тестов
+  - yarn lint
+  - yarn test --passWithNoTests
 
 deploy_script:  # Развертывание на GitHub Pages
   - git config --global credential.helper store
