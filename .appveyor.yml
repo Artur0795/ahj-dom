@@ -1,28 +1,31 @@
-image: Ubuntu2204  # образ для сборки
+image: Ubuntu2204  # Используйте Ubuntu, если Ubuntu2204 не работает
 
-stack: node 20  # окружение
+environment:
+  nodejs_version: "20"  # Указываем версию Node.js
 
 branches:
   only:
-    - master  # ветка git
+    - master  # Ветка git
     - main
 
-cache: node_modules  # кеширование
+cache:
+  - node_modules -> yarn.lock  # Кешируем node_modules
 
 install:
-  - yarn  # команда установки зависимостей
+  - nvm install $nodejs_version  # Устанавливаем Node.js
+  - yarn  # Устанавливаем зависимости
 
-build: off  # отключаем встроенную в appveyor систему сборки
+build: off  # Отключаем встроенную сборку MSBuild
 
 build_script:
-  - yarn build   # команда сборки
+  - yarn build  # Сборка проекта
 
 test_script:
-  - yarn lint && yarn test  # скрипт тестирования
+  - yarn lint && yarn test  # Запуск линтера и тестов
 
-deploy_script:  # скрипт развёртывания
+deploy_script:  # Развертывание на GitHub Pages
   - git config --global credential.helper store
-  - git config --global user.name AppVeyor
-  - git config --global user.email ci@appveyor.com
+  - git config --global user.name "AppVeyor"
+  - git config --global user.email "ci@appveyor.com"
   - echo "https://$GITHUB_TOKEN:x-oauth-basic@github.com" > "$HOME/.git-credentials"
-  - npx gh-pages -d dist -u "appveyor-bot <ci@appveyor>"
+  - npx gh-pages -d dist -u "appveyor-bot <ci@appveyor>" --force
